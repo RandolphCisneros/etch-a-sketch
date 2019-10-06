@@ -1,28 +1,28 @@
-let outerContainer = document.getElementById('outerContainer');
+let outerContainer = document.getElementById('screenContainer');
 
 const gridSize = 3;
-const gridSquareClassName = "gridSquare";
-const rowClassName = 'rowContainer';
-
+const rowContainerClassName = 'rowContainer';
+const itemContainerClassName = 'itemContainer';
 
 initializeInnerContainers();
 
 function initializeInnerContainers() {
     for (let i = 0; i < gridSize; i++){
-        let rowDiv = document.createElement('div');
-        rowDiv.className = rowClassName;
-        rowDiv.id = 'row' + i;
+        let rowContainer = document.createElement('div');
+        rowContainer.className = rowContainerClassName;
+        rowContainer.id = 'row' + i;
+        //rowContainer.textContent = 'row' + i;
 
         for (let j = 0; j < gridSize; j++) {
-            let gridDiv = document.createElement('div');
-            gridDiv.className = gridSquareClassName;
+            let itemContainer = document.createElement('div');
+            itemContainer.className = itemContainerClassName;
             let currentId = i.toString() + j.toString();
-            gridDiv.id = currentId;
-            gridDiv.textContent = currentId;
-            rowDiv.appendChild(gridDiv);
+            itemContainer.id = currentId;
+            itemContainer.textContent = currentId;
+            rowContainer.appendChild(itemContainer);
         }
         let lineBreak = document.createElement('br');
-        rowDiv.appendChild(lineBreak);
-        outerContainer.appendChild(rowDiv);
+        rowContainer.appendChild(lineBreak);
+        outerContainer.appendChild(rowContainer);
     }
 }
