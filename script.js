@@ -18,7 +18,11 @@ function initializeInnerContainers() {
             itemContainer.className = itemContainerClassName;
             let currentId = i.toString() + j.toString();
             itemContainer.id = currentId;
-            itemContainer.textContent = currentId;
+            itemContainer.textContent = '';
+            itemContainer.addEventListener('mouseover', () => {
+                let currentContainer = document.getElementById(itemContainer.id);
+                console.log(contId.id);
+            });
             rowContainer.appendChild(itemContainer);
         }
         let lineBreak = document.createElement('br');
