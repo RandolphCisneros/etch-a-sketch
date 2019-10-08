@@ -1,6 +1,6 @@
 let outerContainer = document.getElementById('screenContainer');
 
-const gridSize = 3;
+let gridSize = 12;
 const rowContainerClassName = 'rowContainer';
 const itemContainerClassName = 'itemContainer';
 const numberPattern = /\d+/g
@@ -39,8 +39,19 @@ function initializeTopRow(){
             allContainers[i].style.filter = "";
             tintMap[allContainers[i].id] = null;
         }
+        if(document.getElementsByClassName('scaleForm')[0].innerHTML != gridSize){
+            console.log('Changed');
+            /*
+            Remove all elements outside top row and call initialize to re-draw with the new scale.
+            */
+        }
     });
+    let scaleForm = document.createElement('input');
+    scaleForm.className = "scaleForm";
+    scaleForm.defaultValue = gridSize;
+
     topRow.appendChild(reDrawButton);
+    topRow.appendChild(scaleForm);
     outerContainer.appendChild(topRow);
 }
 
