@@ -1,5 +1,4 @@
 .screenContainer {
-    background-color: blue;
     min-height: 100%;
     height: 100vh;
     display: flex;
@@ -8,7 +7,6 @@
 
 .rowContainer {
     display: flex;
-    background-color: red;
     flex-basis: auto;
     align-items: stretch;
     flex-direction: row;
@@ -17,8 +15,7 @@
 
 .itemContainer {
     flex-direction: column;
-    border-style: solid;
-    background-color: green;
+    background-color: white;
     display: flex;
     flex-grow: 1;
 }
