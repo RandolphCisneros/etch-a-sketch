@@ -37,7 +37,7 @@ function initializeTopRow(){
         for(var i = 0; i < allContainers.length; i++) {
             allContainers[i].style.backgroundColor = 'white';
             allContainers[i].style.filter = "";
-            tintMap[allContainers[i].id] = 0;
+            tintMap[allContainers[i].id] = null;
         }
     });
     topRow.appendChild(reDrawButton);
