@@ -1,6 +1,6 @@
 let outerContainer = document.getElementById('screenContainer');
 
-const gridSize = 64;
+const gridSize = 3;
 const rowContainerClassName = 'rowContainer';
 const itemContainerClassName = 'itemContainer';
 const numberPattern = /\d+/g
@@ -9,6 +9,9 @@ let tintMap = [];
 initializeInnerContainers();
 
 function initializeInnerContainers() {
+    if(document.getElementsByClassName('topRowDiv').length === 0){
+        initializeTopRow();
+    }
     for (let i = 0; i < gridSize; i++){
         let rowContainer = document.createElement('div');
         rowContainer.className = rowContainerClassName;
@@ -17,34 +20,61 @@ function initializeInnerContainers() {
         for (let j = 0; j < gridSize; j++) {
             let itemContainer = document.createElement('div');
             itemContainer.className = itemContainerClassName;
-            itemContainer.id = i.toString() + j.toString();
-            itemContainer.textContent = '';
-            itemContainer.addEventListener('mouseover', () => {
-                let currentContainer = document.getElementById(itemContainer.id);
-                let color = getRandomColor();
-                let tint = "";
-                let tintNum = 0;
-                currentContainer.style.backgroundColor = color;
-                if(null != tintMap[currentContainer.id]) {
-                    let tintString = tintMap[currentContainer.id];
-                    tint = tintString.match(numberPattern);
-                    let tintNum = parseInt(tint[0]);
-                    tintNum += 50;
-                    let newTintString = "grayscale(" + tintNum + "%)";
-                    tintMap[currentContainer.id] = newTintString;
-                } else {
-                    tintMap[currentContainer.id] = "grayscale(0%)";
-                }
-                currentContainer.style.filter = tintMap[currentContainer.id];
-                //console.log(tintMap[currentContainer.id]);
-                console.log(currentContainer.style.filter.toString());
-            });
+            initializeGridDivs(itemContainer, i, j);
             rowContainer.appendChild(itemContainer);
         }
-        let lineBreak = document.createElement('br');
-        rowContainer.appendChild(lineBreak);
         outerContainer.appendChild(rowContainer);
     }
+}
+
+function initializeTopRow(){
+    let topRow = document.createElement('div');
+    topRow.className = 'topRowDiv';
+    let reDrawButton = document.createElement('button');
+    reDrawButton.textContent = 'Redraw';
+    reDrawButton.addEventListener('click', () => {
+        let allContainers = document.getElementsByClassName('itemContainer');
+        for(var i = 0; i < allContainers.length; i++) {
+            allContainers[i].style.backgroundColor = 'white';
+            allContainers[i].style.filter = "";
+            tintMap[allContainers[i].id] = 0;
+        }
+    });
+    topRow.appendChild(reDrawButton);
+    outerContainer.appendChild(topRow);
+}
+
+function initializeGridDivs(itemContainer, i, j) {
+    itemContainer.id = i.toString() + j.toString();
+    itemContainer.textContent = '';
+    itemContainer.addEventListener('mouseover', () => {
+        executeHoverEffects(itemContainer);
+    });
+}
+
+function executeHoverEffects(itemContainer) {
+    let currentContainer = document.getElementById(itemContainer.id);
+    randomizeColor(currentContainer);
+    let tint = "";
+    let tintNum = 0;
+    if (null != tintMap[currentContainer.id]) {
+        let tintString = tintMap[currentContainer.id];
+        tint = tintString.match(numberPattern);
+        let tintNum = parseInt(tint[0]);
+        tintNum += 20;
+        let newTintString = "grayscale(" + tintNum + "%)";
+        tintMap[currentContainer.id] = newTintString;
+    }
+    else {
+        tintMap[currentContainer.id] = "grayscale(0%)";
+    }
+    currentContainer.style.filter = tintMap[currentContainer.id];
+    console.log(currentContainer.style.filter.toString());
+}
+
+function randomizeColor(currentContainer) {
+    let color = getRandomColor();
+    currentContainer.style.backgroundColor = color;
 }
 
 function getRandomColor() {
