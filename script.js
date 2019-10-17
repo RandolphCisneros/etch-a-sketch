@@ -1,4 +1,4 @@
-let outerContainer = document.getElementById('screenContainer');
+let screenContainer = document.getElementById('screenContainer');
 const rowContainerClassName = 'rowContainer';
 const itemContainerClassName = 'itemContainer';
 
@@ -12,16 +12,18 @@ function initializeInnerContainers() {
     if(document.getElementsByClassName('topRowDiv').length === 0){
         initializeTopRow();
     }
-    for (let i = 0; i < gridSize; i++){
+    for (var i = 0; i < gridSize; i++){
         let rowContainer = document.createElement('div');
         populateRowIdentifiers(rowContainer, i);
-        for (let j = 0; j < gridSize; j++) {
+        for (var j = 0; j < gridSize; j++) {
             let itemContainer = document.createElement('div');
             initializeItemDiv(itemContainer, i, j);
             rowContainer.appendChild(itemContainer);
         }
-        outerContainer.appendChild(rowContainer);
+        screenContainer.appendChild(rowContainer);
     }
+    let allRows = document.getElementsByClassName('rowContainer');
+    console.log(allRows.length);
 }
 
 function populateRowIdentifiers(rowContainer, i) {
@@ -33,33 +35,43 @@ function initializeTopRow(){
     let topRow = document.createElement('div');
     topRow.className = 'topRowDiv';
     let reDrawButton = document.createElement('button');
-    reDrawButton.textContent = 'Redraw';
-    reDrawButton.addEventListener('click', () => {
-        let allItemContainers = document.getElementsByClassName('itemContainer');
-        for(var i = 0; i < allItemContainers.length; i++) {
-            clearItemContainerSettings(allItemContainers, i);
-        }
-        let sizeInGridForm = parseInt(document.getElementsByClassName('scaleForm')[0].value);
-        if(sizeInGridForm != gridSize){
-            gridSize = sizeInGridForm;
-            let rowElements = document.getElementsByClassName('rowContainer');
-            for(var i = 0; i < rowElements.length; i++) {
-                console.log("should remove");
-                rowElements[i].parentNode.removeChild(rowElements[0]);
-            }
-            initializeInnerContainers();
-            /*
-            Remove all elements outside top row and call initialize to re-draw with the new scale.
-            */
-        }
-    });
     let scaleForm = document.createElement('input');
-    scaleForm.className = "scaleForm";
-    scaleForm.defaultValue = gridSize;
+    initializeReDrawButton(reDrawButton);
+    initializeScaleForm(scaleForm);
 
     topRow.appendChild(reDrawButton);
     topRow.appendChild(scaleForm);
-    outerContainer.appendChild(topRow);
+    screenContainer.appendChild(topRow);
+}
+
+function initializeReDrawButton(reDrawButton) {
+    reDrawButton.textContent = 'Redraw';
+    reDrawButton.addEventListener('click', () => {
+        reDraw();
+    });
+}
+
+function reDraw() {
+    let allItemContainers = document.getElementsByClassName('itemContainer');
+    for (var i = 0; i < allItemContainers.length; i++) {
+        clearItemContainerSettings(allItemContainers, i);
+    }
+    let sizeInGridForm = parseInt(document.getElementsByClassName('scaleForm')[0].value);
+    if (sizeInGridForm != gridSize) {
+        gridSize = sizeInGridForm;
+        let rowElements = Array.from(document.getElementsByClassName('rowContainer'));
+        for(var i = 0; i < rowElements.length; i++) {
+            if(rowElements[i].className == 'rowContainer'){
+                screenContainer.removeChild(rowElements[i]);
+            }
+        }
+        initializeInnerContainers();
+    }
+}
+
+function initializeScaleForm(scaleForm) {
+    scaleForm.className = "scaleForm";
+    scaleForm.defaultValue = gridSize;
 }
 
 function clearItemContainerSettings(allItemContainers, i) {
@@ -88,20 +100,26 @@ function executeHoverEffects(itemContainer) {
     let currentContainer = document.getElementById(itemContainer.id);
     randomizeColor(currentContainer);
     let tint = "";
-    let tintNum = 0;
     if (null != tintMap[currentContainer.id]) {
-        let tintString = tintMap[currentContainer.id];
-        tint = tintString.match(numberPattern);
-        let tintNum = parseInt(tint[0]);
-        tintNum += 20;
-        let newTintString = "grayscale(" + tintNum + "%)";
-        tintMap[currentContainer.id] = newTintString;
+        tint = addTint(currentContainer, tint);
     }
     else {
         tintMap[currentContainer.id] = "grayscale(0%)";
     }
     currentContainer.style.filter = tintMap[currentContainer.id];
-    console.log(currentContainer.style.filter.toString());
+}
+
+/*
+Adding grayscale for now. Would be better to darken
+*/
+function addTint(currentContainer, tint) {
+    let tintString = tintMap[currentContainer.id];
+    tint = tintString.match(numberPattern);
+    let tintNum = parseInt(tint[0]);
+    tintNum += 20;
+    let newTintString = "grayscale(" + tintNum + "%)";
+    tintMap[currentContainer.id] = newTintString;
+    return tint;
 }
 
 function randomizeColor(currentContainer) {
