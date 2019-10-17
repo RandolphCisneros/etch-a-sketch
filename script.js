@@ -1,8 +1,8 @@
 let outerContainer = document.getElementById('screenContainer');
-
-let gridSize = 12;
 const rowContainerClassName = 'rowContainer';
 const itemContainerClassName = 'itemContainer';
+
+let gridSize = 12;
 const numberPattern = /\d+/g
 let tintMap = [];
 
@@ -14,17 +14,19 @@ function initializeInnerContainers() {
     }
     for (let i = 0; i < gridSize; i++){
         let rowContainer = document.createElement('div');
-        rowContainer.className = rowContainerClassName;
-        rowContainer.id = 'row' + i;
-
+        populateRowIdentifiers(rowContainer, i);
         for (let j = 0; j < gridSize; j++) {
             let itemContainer = document.createElement('div');
-            itemContainer.className = itemContainerClassName;
-            initializeGridDivs(itemContainer, i, j);
+            initializeItemDiv(itemContainer, i, j);
             rowContainer.appendChild(itemContainer);
         }
         outerContainer.appendChild(rowContainer);
     }
+}
+
+function populateRowIdentifiers(rowContainer, i) {
+    rowContainer.className = rowContainerClassName;
+    rowContainer.id = 'row' + i;
 }
 
 function initializeTopRow(){
@@ -33,14 +35,19 @@ function initializeTopRow(){
     let reDrawButton = document.createElement('button');
     reDrawButton.textContent = 'Redraw';
     reDrawButton.addEventListener('click', () => {
-        let allContainers = document.getElementsByClassName('itemContainer');
-        for(var i = 0; i < allContainers.length; i++) {
-            allContainers[i].style.backgroundColor = 'white';
-            allContainers[i].style.filter = "";
-            tintMap[allContainers[i].id] = null;
+        let allItemContainers = document.getElementsByClassName('itemContainer');
+        for(var i = 0; i < allItemContainers.length; i++) {
+            clearItemContainerSettings(allItemContainers, i);
         }
-        if(document.getElementsByClassName('scaleForm')[0].innerHTML != gridSize){
-            console.log('Changed');
+        let sizeInGridForm = parseInt(document.getElementsByClassName('scaleForm')[0].value);
+        if(sizeInGridForm != gridSize){
+            gridSize = sizeInGridForm;
+            let rowElements = document.getElementsByClassName('rowContainer');
+            for(var i = 0; i < rowElements.length; i++) {
+                console.log("should remove");
+                rowElements[i].parentNode.removeChild(rowElements[0]);
+            }
+            initializeInnerContainers();
             /*
             Remove all elements outside top row and call initialize to re-draw with the new scale.
             */
@@ -55,12 +62,26 @@ function initializeTopRow(){
     outerContainer.appendChild(topRow);
 }
 
-function initializeGridDivs(itemContainer, i, j) {
-    itemContainer.id = i.toString() + j.toString();
-    itemContainer.textContent = '';
+function clearItemContainerSettings(allItemContainers, i) {
+    allItemContainers[i].style.backgroundColor = 'white';
+    allItemContainers[i].style.filter = "";
+    tintMap[allItemContainers[i].id] = null;
+}
+
+function initializeItemDiv(itemContainer, i, j) {
+    itemContainer.className = itemContainerClassName;
+    setContainerId(i, itemContainer, j);
     itemContainer.addEventListener('mouseover', () => {
         executeHoverEffects(itemContainer);
     });
+}
+
+/*
+Need to make this more dynamic but for now just using for > 10 rows
+*/
+function setContainerId(i, itemContainer, j) {
+    itemContainer.id = i > 10 ? "0" : "";
+    itemContainer.id += i.toString() + j.toString();
 }
 
 function executeHoverEffects(itemContainer) {
